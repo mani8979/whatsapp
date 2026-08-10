@@ -1,0 +1,416 @@
+{
+  "info": {
+    "_postman_id": "84d5df62-cd2f-410a-b2db-3f8dbe0ff1e6",
+    "name": "WhatsApp Automation System API",
+    "description": "Postman Collection for WhatsApp Automation REST API endpoints including authentication, sending messages (text, image, document, location, contact card), scheduled posts, group management, and chat administration.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Get Connection Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/status",
+              "host": ["{{base_url}}"],
+              "path": ["api", "status"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout Session",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "logout"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Messaging",
+      "item": [
+        {
+          "name": "Send Text Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"919876543210\",\n  \"body\": \"Hello from the WhatsApp Automation system! 🚀\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/send-message",
+              "host": ["{{base_url}}"],
+              "path": ["api", "send-message"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send Image Message",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "to",
+                  "value": "919876543210",
+                  "type": "text"
+                },
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/send-image",
+              "host": ["{{base_url}}"],
+              "path": ["api", "send-image"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send Document Message",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "to",
+                  "value": "919876543210",
+                  "type": "text"
+                },
+                {
+                  "key": "document",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/send-document",
+              "host": ["{{base_url}}"],
+              "path": ["api", "send-document"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send Location Card",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"919876543210\",\n  \"latitude\": 17.385044,\n  \"longitude\": 78.486671,\n  \"description\": \"Charminar, Hyderabad\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/send-location",
+              "host": ["{{base_url}}"],
+              "path": ["api", "send-location"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send Contact Card",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": \"919876543210\",\n  \"displayName\": \"John Doe\",\n  \"vcard\": \"BEGIN:VCARD\\nVERSION:3.0\\nFN:John Doe\\nORG:Example Corp;\\nTEL;type=CELL;type=VOICE;waid=919876543210:+91 98765 43210\\nEND:VCARD\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/send-contact",
+              "host": ["{{base_url}}"],
+              "path": ["api", "send-contact"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Broadcast Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": [\n    \"919876543210\",\n    \"918765432109\"\n  ],\n  \"body\": \"This is an automated broadcast alert! 📣\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/broadcast",
+              "host": ["{{base_url}}"],
+              "path": ["api", "broadcast"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Schedule Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"to\": [\"919876543210\"],\n  \"body\": \"This scheduled message was queued in MongoDB and processed automatically! ⏰\",\n  \"scheduledTime\": \"2026-07-12T12:00:00.000Z\",\n  \"type\": \"text\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/schedule",
+              "host": ["{{base_url}}"],
+              "path": ["api", "schedule"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Chats",
+      "item": [
+        {
+          "name": "Get All Chats",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/chats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "chats"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Archive Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jid\": \"919876543210@c.us\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/chats/archive",
+              "host": ["{{base_url}}"],
+              "path": ["api", "chats", "archive"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Pin Chat",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jid\": \"919876543210@c.us\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/chats/pin",
+              "host": ["{{base_url}}"],
+              "path": ["api", "chats", "pin"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Groups",
+      "item": [
+        {
+          "name": "Get Groups List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/groups",
+              "host": ["{{base_url}}"],
+              "path": ["api", "groups"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Group",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Automation Team\",\n  \"participants\": [\n    \"919876543210\",\n    \"918765432109\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups",
+              "host": ["{{base_url}}"],
+              "path": ["api", "groups"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"groupJid\": \"120363293849102934@g.us\",\n  \"participants\": [\"919876543210\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups/add",
+              "host": ["{{base_url}}"],
+              "path": ["api", "groups", "add"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Contacts",
+      "item": [
+        {
+          "name": "Get Synced Contacts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/contacts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "contacts"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Contact Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/contacts/919876543210",
+              "host": ["{{base_url}}"],
+              "path": ["api", "contacts", "919876543210"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Block Contact",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"jid\": \"919876543210\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/contacts/block",
+              "host": ["{{base_url}}"],
+              "path": ["api", "contacts", "block"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3001",
+      "type": "string"
+    }
+  ]
+}

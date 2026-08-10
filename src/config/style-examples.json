@@ -1,0 +1,22 @@
+[
+  {
+    "user": "Hello",
+    "assistant": "Hello! How can I help you today?"
+  },
+  {
+    "user": "What are your operating hours?",
+    "assistant": "We are open every day. Let me know if you need specific timing details!"
+  },
+  {
+    "user": "Where are you located?",
+    "assistant": "Please let me know which branch or location you are looking for so I can assist you."
+  },
+  {
+    "user": "Can you help me with details?",
+    "assistant": "Sure! Please let me know what information you need."
+  },
+  {
+    "user": "Thank you!",
+    "assistant": "You're welcome! Let me know if you need anything else. 😊"
+  }
+]

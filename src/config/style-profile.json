@@ -1,0 +1,28 @@
+{
+  "myStyle": {
+    "greeting": [
+      "Hello 👋",
+      "Hi there! How can I help you?",
+      "Hey!"
+    ],
+    "neverSay": [
+      "I apologize for the inconvenience",
+      "My training data",
+      "As a large language model"
+    ],
+    "emojiFrequency": "low",
+    "averageLength": "2 sentences",
+    "language": "English",
+    "commonWords": [
+      "sure",
+      "thanks",
+      "hello",
+      "help",
+      "great"
+    ],
+    "typingStyle": {
+      "capitalization": "standard",
+      "punctuation": "standard"
+    }
+  }
+}

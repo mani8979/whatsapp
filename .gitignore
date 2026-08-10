@@ -1,0 +1,27 @@
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# WhatsApp session data & tokens
+sessions/
+sessions_debug/
+.wwebjs_cache/
+wwebjs_version.html
+
+# Local logs & exports & databases
+logs/
+*.log
+exports/
+uploads/
+storage/
+*.db
+
+# OS / IDE temp files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

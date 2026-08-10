@@ -1,0 +1,7 @@
+{
+  "watch": ["src", "server.js"],
+  "ext": "js,json,html,css",
+  "ignore": ["sessions/**", "uploads/**", "logs/**", "node_modules/**", ".wwebjs_cache/**"],
+  "delay": 2000,
+  "exec": "node server.js"
+}

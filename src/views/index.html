@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Automation Control Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="background-glow"></div>
+  
+  <div class="dashboard-container">
+    <!-- Header -->
+    <header class="glass-header">
+      <div class="logo-area">
+        <span class="logo-icon">💬</span>
+        <div class="logo-text">
+          <h1>WhatsApp Automation</h1>
+          <p>Control Center & AI Engine</p>
+        </div>
+      </div>
+      <div id="status-badge" class="badge status-disconnected">
+        <span class="pulse-dot"></span>
+        <span id="status-text">Checking Status...</span>
+      </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="dashboard-tabs">
+      <button class="tab-btn active" id="tab-console-btn" data-tab="console-tab">Live Console</button>
+      <button class="tab-btn" id="tab-broadcast-btn" data-tab="broadcast-tab">Broadcast Campaigns</button>
+      <button class="tab-btn" id="tab-consent-btn" data-tab="consent-tab">Consent Manager</button>
+      <button class="tab-btn" id="tab-channels-btn" data-tab="channels-tab">📢 Channels</button>
+    </div>
+
+    <!-- Tab Contents -->
+    <div class="tab-content">
+      <!-- 1. LIVE CONSOLE TAB -->
+      <div id="console-tab" class="tab-pane active">
+        <main class="grid-layout">
+          <!-- Panel 1: Connection & Authentication -->
+          <section class="glass-panel connection-panel">
+            <h2 class="panel-title">Authentication</h2>
+            
+            <div id="qr-container" class="qr-wrapper hidden">
+              <img id="qrcode" src="" alt="WhatsApp QR Code" />
+              <p class="qr-instruction">Scan this QR code with your WhatsApp app on your phone to link your account.</p>
+            </div>
+
+            <div id="authenticated-view" class="auth-wrapper hidden">
+              <div class="success-icon">✓</div>
+              <h3>System Connected</h3>
+              <p>Active and running using LocalAuth persistent session storage.</p>
+              <button id="logout-btn" class="btn btn-danger">Disconnect / Logout</button>
+            </div>
+
+            <div id="loading-view" class="loading-wrapper">
+              <div class="spinner"></div>
+              <p id="loading-text">Connecting to WhatsApp browser session...</p>
+            </div>
+          </section>
+
+          <!-- Panel 2: Live API Tester Console -->
+          <section class="glass-panel api-tester-panel">
+            <h2 class="panel-title">Interactive API Console</h2>
+            <p class="panel-desc">Test the live REST endpoints by sending messages directly below.</p>
+            
+            <form id="test-message-form" class="console-form">
+              <div class="form-group">
+                <label for="recipient">Recipient Number / JID</label>
+                <input type="text" id="recipient" placeholder="e.g. 919876543210" required>
+                <span class="input-hint">Country code + number (no spaces/symbols)</span>
+              </div>
+
+              <div class="form-group">
+                <label for="message-body">Message Body</label>
+                <textarea id="message-body" rows="4" placeholder="Hello from the Automation Control Center! 👋" required></textarea>
+              </div>
+
+              <button type="submit" id="send-btn" class="btn btn-primary">Send Test Message</button>
+            </form>
+
+            <div id="console-response" class="console-output hidden">
+              <span class="response-header">Response Status: <strong id="res-status">OK</strong></span>
+              <pre id="res-body"></pre>
+            </div>
+          </section>
+
+          <!-- Panel 3: Server Logs / Live Monitoring -->
+          <section class="glass-panel monitor-panel">
+            <h2 class="panel-title">System Event Stream</h2>
+            <div id="log-screen" class="terminal-screen">
+              <div class="log-line system-line">[System] Control Panel initialized. Ready.</div>
+            </div>
+            <div class="panel-actions">
+              <button id="clear-logs-btn" class="btn btn-secondary">Clear Terminal</button>
+              <a href="/api-docs" target="_blank" class="btn btn-link">View Swagger Docs ↗</a>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <!-- 2. BROADCAST MANAGER TAB -->
+      <div id="broadcast-tab" class="tab-pane hidden">
+        <div class="broadcast-grid">
+          <!-- Left Panel: Create Campaign -->
+          <section class="glass-panel create-campaign-panel">
+            <h2 class="panel-title">Create Broadcast Campaign</h2>
+            <form id="create-campaign-form" class="console-form">
+              <div class="form-group">
+                <label for="campaign-name">Campaign Name</label>
+                <input type="text" id="campaign-name" placeholder="e.g. Summer Promo 2026" required>
+              </div>
+              <div class="form-group">
+                <label for="campaign-body">Message Body / Caption</label>
+                <textarea id="campaign-body" rows="4" placeholder="Hello, thank you for being a valued customer! 👋 (Optional if media is attached)"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="campaign-media">Media Attachment (Optional)</label>
+                <input type="file" id="campaign-media" accept="image/*,video/*,audio/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                <span class="input-hint">Attach a photo, video, audio, or document to broadcast.</span>
+              </div>
+              
+              <div class="form-group">
+                <label>Recipient Source</label>
+                <div class="radio-group">
+                  <label class="radio-label">
+                    <input type="radio" name="recipient-source" value="db" checked> Select Opted-In Contacts (DB)
+                  </label>
+                  <label class="radio-label">
+                    <input type="radio" name="recipient-source" value="csv"> Import from CSV File
+                  </label>
+                </div>
+              </div>
+
+              <!-- DB Recipient Selection View -->
+              <div id="db-recipients-select" class="recipient-source-view">
+                <div class="form-group">
+                  <label>Select Recipients (<span id="opted-in-count">0</span> selected)</label>
+                  <div class="select-contacts-container">
+                    <div class="select-contacts-header">
+                      <input type="text" id="contacts-search-broadcast" placeholder="Search contacts...">
+                      <button type="button" id="select-all-broadcast-btn" class="btn btn-secondary btn-sm">Select All</button>
+                    </div>
+                    <div id="broadcast-contacts-list" class="contacts-checklist-box">
+                      <!-- Dynamically filled -->
+                      <p class="empty-hint">No opted-in contacts found. Add them in Consent Manager.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- CSV Upload View -->
+              <div id="csv-recipients-select" class="recipient-source-view hidden">
+                <div class="form-group">
+                  <label for="csv-file">Upload CSV File</label>
+                  <input type="file" id="csv-file" accept=".csv">
+                  <span class="input-hint">CSV must contain a column for phone numbers (e.g. "phone", "number"). Optionally include a "name" column.</span>
+                </div>
+                <div class="form-group checkbox-group">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="confirm-csv-consent">
+                    I confirm that all contacts in this CSV have explicitly consented to receive WhatsApp messages.
+                  </label>
+                </div>
+              </div>
+
+              <!-- Advanced Settings (Collapsible) -->
+              <details class="advanced-settings">
+                <summary>Advanced Delivery Controls</summary>
+                <div class="advanced-grid">
+                  <div class="form-group">
+                    <label for="batch-size">Batch Size</label>
+                    <input type="number" id="batch-size" value="5" min="1" max="50">
+                  </div>
+                  <div class="form-group">
+                    <label for="delay-message">Msg Interval (s)</label>
+                    <input type="number" id="delay-message" value="2" min="1" max="10">
+                  </div>
+                  <div class="form-group">
+                    <label for="delay-batch">Batch Interval (s)</label>
+                    <input type="number" id="delay-batch" value="5" min="1" max="60">
+                  </div>
+                </div>
+              </details>
+
+              <button type="submit" id="start-broadcast-btn" class="btn btn-primary">Create & Start Broadcast</button>
+            </form>
+          </section>
+
+          <!-- Right Panels: Active Campaign Tracker & Campaigns History -->
+          <div class="broadcast-monitor-column">
+            <!-- Active Tracker -->
+            <section class="glass-panel active-campaign-panel">
+              <h2 class="panel-title">Active Campaign Tracker</h2>
+              <div id="no-active-campaign" class="tracker-empty-state">
+                <p>No campaign is currently running.</p>
+              </div>
+              <div id="active-campaign-tracker" class="tracker-active-state hidden">
+                <div class="tracker-header">
+                  <h3 id="active-campaign-title">Campaign Name</h3>
+                  <span id="active-campaign-status" class="badge status-connecting">Processing</span>
+                </div>
+                <div class="progress-section">
+                  <div class="progress-info">
+                    <span>Delivery Progress</span>
+                    <span id="active-progress-percent">0%</span>
+                  </div>
+                  <div class="progress-bar-container">
+                    <div id="active-progress-bar" class="progress-bar" style="width: 0%;"></div>
+                  </div>
+                </div>
+                <div class="stats-grid">
+                  <div class="stat-box">
+                    <span class="stat-num" id="stat-total">0</span>
+                    <span class="stat-lbl">Recipients</span>
+                  </div>
+                  <div class="stat-box success">
+                    <span class="stat-num" id="stat-sent">0</span>
+                    <span class="stat-lbl">Sent</span>
+                  </div>
+                  <div class="stat-box danger">
+                    <span class="stat-num" id="stat-failed">0</span>
+                    <span class="stat-lbl">Failed</span>
+                  </div>
+                </div>
+                <div class="control-actions">
+                  <button id="pause-campaign-btn" class="btn btn-secondary">Pause</button>
+                  <button id="resume-campaign-btn" class="btn btn-primary hidden">Resume</button>
+                  <button id="cancel-campaign-btn" class="btn btn-danger">Cancel</button>
+                </div>
+                
+                <!-- Recipient Delivery Logs Table -->
+                <div class="recipient-logs-container">
+                  <h4>Live Recipient Status Logs</h4>
+                  <div class="logs-table-wrapper">
+                    <table class="logs-table">
+                      <thead>
+                        <tr>
+                          <th>Number</th>
+                          <th>Name</th>
+                          <th>Status</th>
+                          <th>Attempts</th>
+                          <th>Errors / Details</th>
+                        </tr>
+                      </thead>
+                      <tbody id="active-recipients-logs-body">
+                        <!-- Dynamically filled -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Campaigns History -->
+            <section class="glass-panel history-campaign-panel">
+              <h2 class="panel-title">Campaign History</h2>
+              <div class="history-table-wrapper">
+                <table class="history-table">
+                  <thead>
+                    <tr>
+                      <th>Date</th>
+                      <th>Campaign Name</th>
+                      <th>Total</th>
+                      <th>Sent</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="campaign-history-body">
+                    <!-- Dynamically filled -->
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. CONSENT MANAGER TAB -->
+      <div id="consent-tab" class="tab-pane hidden">
+        <div class="consent-grid">
+          <!-- Left side: Consent Contacts list -->
+          <section class="glass-panel contacts-consent-panel">
+            <div class="panel-header-actions">
+              <h2 class="panel-title">Consent Manager</h2>
+              <div class="bulk-actions" style="display: flex; gap: 0.5rem;">
+                <button id="export-contacts-btn" class="btn btn-secondary btn-sm">📊 Export All Contacts</button>
+                <button id="export-unknown-contacts-btn" class="btn btn-secondary btn-sm">👤 Export Unknown Contacts</button>
+                <button id="sync-contacts-btn" class="btn btn-secondary btn-sm">Sync WhatsApp Contacts</button>
+              </div>
+            </div>
+            <p class="panel-desc">Only checked contacts have explicitly consented and will receive broadcast messages. Use toggle switches to update status.</p>
+
+            <div class="contacts-table-controls">
+              <input type="text" id="consent-contacts-search" placeholder="Filter by name or number...">
+              <select id="consent-contacts-type-filter">
+                <option value="all">All Types</option>
+                <option value="saved">Saved Contacts</option>
+                <option value="unsaved">Unsaved Contacts</option>
+                <option value="groups">Groups Only</option>
+              </select>
+              <div id="consent-selection-status" style="font-size: 0.8rem; color: var(--text-secondary); margin-left: auto; display: flex; align-items: center; gap: 0.4rem; padding-right: 0.5rem; white-space: nowrap;">
+                Selected: <strong id="consent-selected-count" style="color: var(--color-primary);">0</strong>
+              </div>
+              <div class="filter-actions">
+                <button id="bulk-opt-in-btn" class="btn btn-secondary btn-sm">Bulk Opt-In</button>
+                <button id="bulk-opt-out-btn" class="btn btn-secondary btn-sm">Bulk Opt-Out</button>
+              </div>
+            </div>
+
+            <div class="contacts-table-wrapper">
+              <table class="contacts-table">
+                <thead>
+                  <tr>
+                    <th width="40"><input type="checkbox" id="select-all-contacts-chk"></th>
+                    <th>Name</th>
+                    <th>WhatsApp Number</th>
+                    <th>Type</th>
+                    <th>Relationship</th>
+                    <th width="120">Opt-in Consent</th>
+                  </tr>
+                </thead>
+                <tbody id="consent-contacts-body">
+                  <!-- Dynamically filled -->
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Right side: Add Contact Form -->
+          <section class="glass-panel add-contact-panel">
+            <h2 class="panel-title">Add Consent Record Manually</h2>
+            <p class="panel-desc">Directly record an explicit message opt-in consent for a new recipient.</p>
+            <form id="add-contact-consent-form" class="console-form">
+              <div class="form-group">
+                <label for="new-contact-number">WhatsApp Number</label>
+                <input type="text" id="new-contact-number" placeholder="e.g. 919876543210" required>
+                <span class="input-hint">Include country code, digits only.</span>
+              </div>
+              <div class="form-group">
+                <label for="new-contact-name">Contact Name (Optional)</label>
+                <input type="text" id="new-contact-name" placeholder="e.g. Jane Smith">
+              </div>
+              <div class="form-group checkbox-group">
+                <label class="checkbox-label">
+                  <input type="checkbox" id="new-contact-opt-in" checked>
+                  Explicit consent received (Opt-in to messages)
+                </label>
+              </div>
+              <button type="submit" class="btn btn-primary">Save Consent Record</button>
+            </form>
+          </section>
+        </div>
+      </div>
+    </div>
+      <!-- 4. CHANNELS TAB -->
+      <div id="channels-tab" class="tab-pane hidden">
+        <div style="padding: 1.5rem 0; display:flex; flex-direction:column; gap:1.5rem;">
+
+          <!-- Channel List Panel -->
+          <div class="glass-panel" style="padding: 1.5rem;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+              <div>
+                <h2 class="panel-title" style="margin:0;">📢 WhatsApp Channels</h2>
+                <p class="panel-desc" style="margin:0.25rem 0 0;">Channels (newsletters) your account follows. Click <strong>Get Numbers</strong> to extract subscribers.</p>
+              </div>
+              <button id="refresh-channels-btn" class="btn btn-secondary btn-sm">🔄 Refresh</button>
+            </div>
+            <div id="channels-loading" style="text-align:center; padding:2rem; color:var(--text-muted); display:none;">Loading channels...</div>
+            <div id="channels-empty" style="text-align:center; padding:2rem; color:var(--text-muted); display:none;">No channels found. Follow some WhatsApp channels on your phone first.</div>
+            <div id="channels-list" class="contacts-table-wrapper">
+              <table class="contacts-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Channel Name</th>
+                    <th>Description</th>
+                    <th>Unread</th>
+                    <th>Muted</th>
+                    <th>Last Activity</th>
+                    <th>Subscribers</th>
+                  </tr>
+                </thead>
+                <tbody id="channels-body">
+                  <!-- Dynamically filled -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Subscribers Panel (shown after clicking Get Numbers) -->
+          <div class="glass-panel" id="subscribers-panel" style="padding: 1.5rem; display:none;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem;">
+              <div>
+                <h2 class="panel-title" style="margin:0;">👥 Channel Subscribers</h2>
+                <p class="panel-desc" id="subscribers-channel-name" style="margin:0.25rem 0 0;">—</p>
+              </div>
+              <div style="display:flex; gap:0.5rem;">
+                <button id="export-subscribers-csv-btn" class="btn btn-secondary btn-sm">📊 Export CSV</button>
+                <button id="close-subscribers-btn" class="btn btn-secondary btn-sm">✕ Close</button>
+              </div>
+            </div>
+            <div id="subscribers-loading" style="text-align:center; padding:2rem; color:var(--text-muted); display:none;">Fetching subscriber numbers...</div>
+            <div id="subscribers-empty" style="text-align:center; padding:2rem; color:var(--text-muted); display:none;"></div>
+            <div id="subscribers-list" class="contacts-table-wrapper" style="display:none;">
+              <table class="contacts-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>WhatsApp Number</th>
+                    <th>Role</th>
+                    <th>In Contacts</th>
+                  </tr>
+                </thead>
+                <tbody id="subscribers-body">
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+    <footer class="glass-footer">
+      <p>WhatsApp Automation System v1.0.0 • Powered by whatsapp-web.js & express.js</p>
+    </footer>
+  </div>
+
+  <!-- Socket.io client -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>
